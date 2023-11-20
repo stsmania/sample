@@ -1,0 +1,68 @@
+{{ define "members/new.tmpl" }}
+{{ template "layout" }}
+{{ block "new" . }}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    section {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #3498db;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    label {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+    }
+
+    input[type="submit"] {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<section>
+    <h2>新規登録</h2>
+    <form method="post" action="/members">
+        <label for="name">名前</label>
+        <input type="text" name="name" placeholder="入力してください" required>
+        <input type="submit" value="登録">
+    </form>
+</section>
+
+{{ end }}
+{{ end }}
+

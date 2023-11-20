@@ -1,0 +1,125 @@
+{{ define "members/index.tmpl" }}
+{{ template "layout" . }}
+{{ block "top" . }}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    section {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    h3 {
+        color: #3498db;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #ecf0f1;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .delete-button {
+        background-color: #e74c3c;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 3px;
+    }
+
+    .delete-button:hover {
+        background-color: #c0392b;
+    }
+</style>
+
+<section>
+    <div>
+        <button id="text-button" onclick="fetchSelectMember()">今日はだれかな？</button>
+    </div>
+</section>
+
+<section>
+    <h3>登録メンバー</h3>
+    <ul>
+        {{ range .people }}
+            <li>
+                <span>{{.Name}}さん</span>
+                <button class="delete-button" onclick="deleteMember(this)" data-user-id={{.Id}} confirm: true>削除</button>
+            </li>
+        {{ end }}
+    </ul>
+</section>
+
+    <script>
+        var fetchSelectMember = function() {
+            fetch('/members/select', { cache: 'no-cache' })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error();
+                }
+                return response.json();
+            })
+            .then((response) => {
+                alert(`${response.name}さん、君に決めた！`);
+            })
+            .catch((reason) => {
+                alert(`エラー発生`);
+            });
+        }
+
+        var deleteMember = function(obj) {
+            const id = obj.getAttribute('data-user-id');
+            const request_path = `/members/${id}`
+
+            fetch(request_path, { cache: 'no-cache', method: 'DELETE' })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error();
+                }
+                return response.json();
+            })
+            .then((response) => {
+                location.reload()
+            })
+            .catch((reason) => {
+                alert(`エラー発生`);
+            });
+        }
+    </script>
+
+{{ end }}
+{{ end }}
+

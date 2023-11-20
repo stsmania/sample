@@ -1,0 +1,72 @@
+<!-- layout.tmpl -->
+
+{{ define "layout" }}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+        }
+        nav {
+            background-color: #eee;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .crumbs {
+            list-style-type: none;
+            padding-left: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .crumb {
+            margin: 0 10px;
+        }
+        .crumb a {
+            text-decoration: none;
+            color: #333;
+        }
+        /* 追加するCSS */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        li:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>sampleくん</h1>
+    </header>
+    <nav>
+        <ol class="crumbs">
+            <li class="crumb"><a href="/">Top</a></li>
+            <li class="crumb"><a href="/members/new">メンバー登録</a></li>
+        </ol>
+    </nav>
+</body>
+</html>
+{{ end }}
