@@ -56,3 +56,15 @@ func Get_all() []Person {
         db.Find(&people)
         return people
 }
+
+func Sample() Person {
+        db, err := gorm.Open(sqlite.Open(databaseFile), &gorm.Config{})
+        if err != nil {
+            panic("failed to connect database\n")
+        }
+
+
+        var person Person
+        db.Order("RANDOM()").Limit(1).Find(&person)
+        return person
+}

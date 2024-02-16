@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"sample/models/person"
 	"strconv"
-        "math/rand"
-        "time"
 )
 
 func SetupRoutes(r *gin.Engine) {
@@ -61,13 +59,10 @@ func deleteMember(c *gin.Context) {
 }
 
 func selectMember(c *gin.Context) {
-    rand.Seed(time.Now().UnixNano())
-    people := person.Get_all()
-    randomIndex := rand.Intn(len(people))
-    randomElement := people[randomIndex]
+    people := person.Sample()
     c.JSON(200, gin.H{
-        "id": randomElement.Id,
-        "name": randomElement.Name,
+        "id": people.Id,
+        "name": people.Name,
     })
 }
 
