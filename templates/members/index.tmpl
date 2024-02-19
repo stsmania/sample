@@ -12,7 +12,7 @@
             <h2>メンバー一覧</h2>
         </section>
 
-        {{ if .people | len }}
+        {{ if .members | len }}
             <section class="mt-4">
                 <div class="container">
                     <div id="#today-worker" class="alert alert-info notification">
@@ -28,7 +28,7 @@
             </section>
 
             <ul class="list-group">
-                {{ range .people }}
+                {{ range .members }}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>{{.Name}}さん</span>
                         <button class="btn btn-danger delete-button" onclick="deleteMember(this)"
@@ -47,7 +47,7 @@
 
         <script>
             const fetchSelectMember = function () {
-                fetch('/members/select', {cache: 'no-cache'})
+                fetch('/members/random', {cache: 'no-cache'})
                     .then((response) => {
                         if (!response.ok) {
                             throw new Error();

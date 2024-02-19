@@ -17,14 +17,14 @@ func SetupRoutes(r *gin.Engine) {
 		member.DELETE("/:id", deleteMember)
 		member.GET("", indexMember)
 		member.POST("", createMember)
-		member.GET("/select", selectMember)
+		member.GET("/random", randomMember)
 	}
 	team := r.Group("/teams")
 	{
 		team.GET("/new", newTeam)
 		team.GET("", indexTeam)
-		team.GET("/:id/people", showTeamPeople)
-		team.GET("/:id/people/select", selectTeamMember)
+		team.GET("/:id/member", showTeamMember)
+		team.GET("/:id/member/random", randomTeamMember)
 		team.POST("", createTeam)
 	}
 }

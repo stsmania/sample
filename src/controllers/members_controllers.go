@@ -14,12 +14,8 @@ func indexMember(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	notificationMessage := c.Query("notificationMessage")
-	people := repo.AllPerson()
-	c.HTML(http.StatusOK, "members/index.tmpl", gin.H{
-		"people":              people,
-		"notificationMessage": notificationMessage,
-	})
+	members := repo.AllMember()
+	c.HTML(http.StatusOK, "members/index.tmpl", gin.H{"members": members})
 }
 
 func showMember(c *gin.Context) {
@@ -28,11 +24,11 @@ func showMember(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	person := repo.FindPerson(id)
+	member := repo.FindMember(id)
 	c.HTML(http.StatusOK, "members/show.tmpl", gin.H{
 		"title": "show",
-		"name":  person.Name,
-		"id":    person.Id,
+		"name":  member.Name,
+		"id":    member.Id,
 	})
 }
 
@@ -42,7 +38,7 @@ func createMember(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	repoErr := repo.CreatePerson(name)
+	repoErr := repo.CreateMember(name)
 	if repoErr != nil {
 		var errorMessages []string
 		errorMessages = append(errorMessages, repoErr.Error())
@@ -63,20 +59,20 @@ func deleteMember(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	repo.DeletePerson(id)
+	repo.DeleteMember(id)
 	c.JSON(200, gin.H{
 		"id": id,
 	})
 }
 
-func selectMember(c *gin.Context) {
+func randomMember(c *gin.Context) {
 	repo, err := models.NewRepository()
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	person := repo.SamplePerson()
+	member := repo.RandomMember()
 	c.JSON(200, gin.H{
-		"id":   person.Id,
-		"name": person.Name,
+		"id":   member.Id,
+		"name": member.Name,
 	})
 }
