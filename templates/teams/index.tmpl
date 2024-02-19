@@ -28,7 +28,7 @@
                                     <div class="btn-group" role="group">
                                         <div class="p-1"><a href="#" onclick="fetchSelectMember(this)" data-id="{{ .Id }}"
                                                             class="btn btn-dark">抽選</a></div>
-                                        <div class="p-1"><a href="/teams/{{ .Id }}/people"
+                                        <div class="p-1"><a href="/teams/{{ .Id }}/member"
                                                             class="btn btn-primary">チーム詳細</a></div>
                                         <div class="p-1"><a href="/teams/{{ .Id }}" class="btn btn-danger">削除</a></div>
                                     </div>
@@ -51,7 +51,7 @@
          <script>
              const fetchSelectMember = function (event) {
                  let id = event.dataset.id;
-                 fetch(`/teams/${id}/people/select`, {cache: 'no-cache'})
+                 fetch(`/teams/${id}/member/random`, {cache: 'no-cache'})
                      .then((response) => {
                          if (!response.ok) {
                              throw new Error();

@@ -9,10 +9,10 @@ type Team struct {
 	gorm.Model
 	Id      uint
 	Name    string    `gorm:"unique;not null"`
-	Persons []*Person `gorm:"many2many:person_teams"` // Teamに所属するTeamのスライス
+	Members []*Member `gorm:"many2many:member_teams"` // Teamに所属するTeamのスライス
 }
 
-func (r *Repository) CreateTeam(name string, people *[]Person) error {
+func (r *Repository) CreateTeam(name string, members *[]Member) error {
 
 	team := Team{Name: name}
 
@@ -22,11 +22,11 @@ func (r *Repository) CreateTeam(name string, people *[]Person) error {
 
 	r.db.Create(&team)
 
-	peopleSlice := *people
-	for _, person := range peopleSlice {
-		// 新しいPersonポインタを作成して、それをteam.Personsに追加する
-		newPerson := person // 新しいPersonオブジェクトを作成
-		team.Persons = append(team.Persons, &newPerson)
+	membersSlice := *members
+	for _, member := range membersSlice {
+		// 新しいMemberポインタを作成して、それをteam.Membersに追加する
+		newMember := member // 新しいMemberオブジェクトを作成
+		team.Members = append(team.Members, &newMember)
 	}
 
 	// チームを保存
@@ -57,7 +57,7 @@ func (r *Repository) AllTeam() *[]Team {
 	return &teams
 }
 
-func (r *Repository) SampleTeam() *Team {
+func (r *Repository) RandomTeam() *Team {
 	var team Team
 	if err := r.db.Order("RANDOM()").Limit(1).Find(&team).Error; err != nil {
 		panic("failed to connect database\n")

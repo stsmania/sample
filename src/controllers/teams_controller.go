@@ -23,8 +23,8 @@ func createTeam(c *gin.Context) {
 		println(err)
 	}
 
-	people := repo.FindPersonByIds(memberIds)
-	repoErr := repo.CreateTeam(name, &people)
+	membersList := repo.FindMemberByIds(memberIds)
+	repoErr := repo.CreateTeam(name, &membersList)
 	if repoErr != nil {
 		var errorMessages []string
 		errorMessages = append(errorMessages, repoErr.Error())
@@ -39,9 +39,9 @@ func newTeam(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	people := repo.AllPerson()
+	members := repo.AllMember()
 
-	c.HTML(http.StatusOK, "teams/new.tmpl", gin.H{"people": people})
+	c.HTML(http.StatusOK, "teams/new.tmpl", gin.H{"members": members})
 }
 
 func indexTeam(c *gin.Context) {
@@ -53,7 +53,7 @@ func indexTeam(c *gin.Context) {
 	c.HTML(http.StatusOK, "teams/index.tmpl", gin.H{"teams": teams})
 }
 
-func showTeamPeople(c *gin.Context) {
+func showTeamMember(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	repo, err := models.NewRepository()
 	if err != nil {
@@ -61,21 +61,21 @@ func showTeamPeople(c *gin.Context) {
 	}
 
 	team := repo.FindTeam(id)
-	people := repo.TeamPeople(id)
+	members := repo.TeamMembers(id)
 
-	c.HTML(http.StatusOK, "teams/show.tmpl", gin.H{"team": team, "people": people})
+	c.HTML(http.StatusOK, "teams/show.tmpl", gin.H{"team": team, "members": members})
 }
 
-func selectTeamMember(c *gin.Context) {
+func randomTeamMember(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	repo, err := models.NewRepository()
 	if err != nil {
 		log.Fatalf("failed to create repository: %v", err)
 	}
-	person := repo.SampleTeamPeople(id)
+	member := repo.RandomTeamMember(id)
 
 	c.JSON(200, gin.H{
-		"id":   person.Id,
-		"name": person.Name,
+		"id":   member.Id,
+		"name": member.Name,
 	})
 }
