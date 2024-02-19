@@ -1,125 +1,93 @@
 {{ define "members/index.tmpl" }}
-{{ template "layout" . }}
-{{ block "top" . }}
+    <html lang="ja">
+    {{ template "header" }}
+    {{ template "navi" }}
 
-<style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
+    <body class="d-flex flex-column min-vh-100">
 
-    section {
-        margin: 20px;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+    {{ template "notificationMessage" . }}
 
-    button {
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 16px;
-    }
+    <div class="container">
+        <section class="mt-4">
+            <h2>メンバー一覧</h2>
+        </section>
 
-    button:hover {
-        background-color: #2980b9;
-    }
+        {{ if .people | len }}
+            <section class="mt-4">
+                <div class="container">
+                    <div id="#today-worker" class="alert alert-info notification">
+                        <span>全メンバーから抽選しますよ</span>
+                    </div>
+                </div>
+            </section>
 
-    h3 {
-        color: #3498db;
-    }
+            <section class="mt-4 mb-2">
+                <div class="container">
+                    <button id="text-button" class="btn btn-primary" onclick="fetchSelectMember()">抽選開始</button>
+                </div>
+            </section>
 
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        margin-bottom: 10px;
-        padding: 10px;
-        background-color: #ecf0f1;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .delete-button {
-        background-color: #e74c3c;
-        color: #fff;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        font-size: 14px;
-        border-radius: 3px;
-    }
-
-    .delete-button:hover {
-        background-color: #c0392b;
-    }
-</style>
-
-<section>
-    <div>
-        <button id="text-button" onclick="fetchSelectMember()">今日はだれかな？</button>
-    </div>
-</section>
-
-<section>
-    <h3>登録メンバー</h3>
-    <ul>
-        {{ range .people }}
-            <li>
-                <span>{{.Name}}さん</span>
-                <button class="delete-button" onclick="deleteMember(this)" data-user-id={{.Id}} confirm: true>削除</button>
-            </li>
+            <ul class="list-group">
+                {{ range .people }}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{.Name}}さん</span>
+                        <button class="btn btn-danger delete-button" onclick="deleteMember(this)"
+                                data-user-id={{.Id}} confirm="true">削除
+                        </button>
+                    </li>
+                {{ end }}
+            </ul>
+        {{ else }}
+            <div class="container mt-4">
+                <div class="alert alert-danger" role="alert">
+                    <p>チームがありません</p>
+                </div>
+            </div>
         {{ end }}
-    </ul>
-</section>
 
-    <script>
-        var fetchSelectMember = function() {
-            fetch('/members/select', { cache: 'no-cache' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error();
-                }
-                return response.json();
-            })
-            .then((response) => {
-                alert(`${response.name}さん、君に決めた！`);
-            })
-            .catch((reason) => {
-                alert(`エラー発生`);
-            });
-        }
+        <script>
+            const fetchSelectMember = function () {
+                fetch('/members/select', {cache: 'no-cache'})
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error();
+                        }
+                        return response.json();
+                    })
+                    .then((response) => {
+                        let element = document.getElementById('#today-worker');
+                        element.innerHTML = `<img class="p-1" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzATs-2czMVVRQ6i6Q_iNySm1e8dw_eExI6buA1uZb2m7B6S_jwhRqCJ6xCW_wwI2cTLc&usqp=CAU" alt="君に決めた"><span class="p-1 lead">${response.name}さん、君に決めた！</span>`;
+                    })
+                    .catch((reason) => {
+                        alert(`エラー発生`);
+                    });
+            };
 
-        var deleteMember = function(obj) {
-            const id = obj.getAttribute('data-user-id');
-            const request_path = `/members/${id}`
+            const deleteMember = function (obj) {
+                const id = obj.getAttribute('data-user-id');
+                const request_path = `/members/${id}`
 
-            fetch(request_path, { cache: 'no-cache', method: 'DELETE' })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error();
-                }
-                return response.json();
-            })
-            .then((response) => {
-                location.reload()
-            })
-            .catch((reason) => {
-                alert(`エラー発生`);
-            });
-        }
-    </script>
+                fetch(request_path, {cache: 'no-cache', method: 'DELETE'})
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error();
+                        }
+                        return response.json();
+                    })
+                    .then((response) => {
+                        location.reload()
+                    })
+                    .catch((reason) => {
+                        alert(`エラー発生`);
+                    });
+            };
+        </script>
+
+    </div>
+
+
+    {{template "footer"}}
+    </body>
+    </html>
 
 {{ end }}
-{{ end }}
-

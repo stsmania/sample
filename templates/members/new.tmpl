@@ -1,68 +1,36 @@
 {{ define "members/new.tmpl" }}
-{{ template "layout" }}
-{{ block "new" . }}
+<html lang="ja">
+{{ template "header" }}
+{{ template "navi" }}
 
-<style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
+<body class="d-flex flex-column min-vh-100">
 
-    section {
-        margin: 20px;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+{{ template "errorMessages" . }}
+{{ template "notificationMessage" . }}
 
-    h2 {
-        color: #3498db;
-    }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+<div class="container">
+    <section class="mt-4">
+        <h2>新規登録</h2>
+        <form method="post" action="/members" class="needs-validation" novalidate>
+            <div class="form-control">
+                <div class="form-group mb-3">
+                    <label for="name">名前</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="入力してください"
+                           required>
+                    <div class="invalid-feedback">
+                        名前を入力してください。
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">登録</button>
+            </div>
+        </form>
+    </section>
+</div>
 
-    label {
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-
-    input[type="text"] {
-        padding: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 20px;
-    }
-
-    input[type="submit"] {
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #2980b9;
-    }
-</style>
-
-<section>
-    <h2>新規登録</h2>
-    <form method="post" action="/members">
-        <label for="name">名前</label>
-        <input type="text" name="name" placeholder="入力してください" required>
-        <input type="submit" value="登録">
-    </form>
-</section>
+{{template "footer"}}
 
 {{ end }}
-{{ end }}
+</body>
+</html>
 
