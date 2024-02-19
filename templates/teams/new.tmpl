@@ -1,0 +1,58 @@
+{{ define "teams/new.tmpl" }}
+    <html lang="ja">
+    {{ template "header" }}
+    {{ template "navi" }}
+
+    <body class="d-flex flex-column min-vh-100">
+
+    {{ template "errorMessages" . }}
+    {{ template "notificationMessage" . }}
+
+    <div class="container">
+        <section class="mt-4">
+            <h2>チーム作成</h2>
+        </section>
+
+        {{ if .people | len }}
+            <div class="card">
+                <div class="card-body">
+                    <form action="/teams" method="POST">
+                        <div class="form-group">
+                            <label for="teamName">チーム名:</label>
+                            <input type="text" class="form-control" id="teamName" name="teamName"
+                                   placeholder="入力してください" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="members">メンバー:</label>
+                            <div class="form-check">
+                                {{ range .people }}
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="member{{ .Id }}"
+                                               name="members"
+                                               value="{{ .Id }}">
+                                        <label class="form-check-label" for="member{{ .Id }}"
+                                               style="font-size: 18px;">{{ .Name }}</label>
+                                    </div>
+                                {{ end }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">チーム作成</button>
+                    </form>
+                </div>
+            </div>
+        {{ else }}
+            <div class="container mt-4">
+                <div class="alert alert-danger" role="alert">
+                    <p>メンバーがいません。メンバーを作ってください。</p>
+                </div>
+            </div>
+        {{ end }}
+    </div>
+
+
+    {{template "footer"}}
+
+    </body>
+    </html>
+
+{{ end }}
