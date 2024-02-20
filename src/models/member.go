@@ -14,7 +14,7 @@ type Member struct {
 
 func (r *Repository) CreateMember(name string) error {
 	if name == "" {
-		return errors.New("team name cannot be empty")
+		return errors.New("member name cannot be empty")
 	}
 
 	return r.db.Create(&Member{Name: name}).Error

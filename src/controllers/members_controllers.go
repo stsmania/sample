@@ -42,7 +42,7 @@ func createMember(c *gin.Context) {
 	if repoErr != nil {
 		var errorMessages []string
 		errorMessages = append(errorMessages, repoErr.Error())
-		c.HTML(http.StatusBadRequest, "members/new.tmpl", gin.H{})
+		c.HTML(http.StatusBadRequest, "members/new.tmpl", gin.H{"errorMessages": errorMessages})
 		return
 	}
 	c.Redirect(http.StatusFound, "/members")
