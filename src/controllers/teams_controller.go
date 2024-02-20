@@ -61,9 +61,21 @@ func showTeamMember(c *gin.Context) {
 	}
 
 	team := repo.FindTeam(id)
-	members := repo.TeamMembers(id)
+	members, _ := repo.TeamMembers(id)
 
 	c.HTML(http.StatusOK, "teams/show.tmpl", gin.H{"team": team, "members": members})
+}
+
+func deleteTeam(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	repo, err := models.NewRepository()
+	if err != nil {
+		log.Fatalf("failed to create repository: %v", err)
+	}
+
+	repo.DeleteTeam(id)
+
+	c.HTML(http.StatusOK, "teams/index.tmpl", gin.H{})
 }
 
 func randomTeamMember(c *gin.Context) {
