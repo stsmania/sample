@@ -30,7 +30,7 @@
                                                             class="btn btn-dark">抽選</a></div>
                                         <div class="p-1"><a href="/teams/{{ .Id }}/member"
                                                             class="btn btn-primary">チーム詳細</a></div>
-                                        <div class="p-1"><a href="/teams/{{ .Id }}" class="btn btn-danger">削除</a></div>
+                                        <div class="p-1"><a href="#" onclick="deleteTeam(this)" data-team_id="{{ .Id }}" class="btn btn-danger">削除</a></div>
                                     </div>
                                 </li>
                             {{ end }}
@@ -61,6 +61,25 @@
                      .then((response) => {
                          let element = document.getElementById('#today-worker');
                          element.innerHTML = `<img class="p-1" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzATs-2czMVVRQ6i6Q_iNySm1e8dw_eExI6buA1uZb2m7B6S_jwhRqCJ6xCW_wwI2cTLc&usqp=CAU" alt="君に決めた"><span class="p-1 lead">${response.name}さん、君に決めた！</span>`;
+                     })
+                     .catch((reason) => {
+                         alert(`エラー発生`);
+                     });
+             };
+
+             const deleteTeam = function (event) {
+                 const id = event.dataset.team_id;
+                 const request_path = `/teams/${id}`;
+
+                 fetch(request_path, {cache: 'no-cache', method: 'DELETE'})
+                     .then((response) => {
+                         if (!response.ok) {
+                             throw new Error();
+                         }
+                         return response.json();
+                     })
+                     .then((response) => {
+                         location.reload()
                      })
                      .catch((reason) => {
                          alert(`エラー発生`);

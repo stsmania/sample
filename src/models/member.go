@@ -9,7 +9,7 @@ type Member struct {
 	gorm.Model
 	Id    uint
 	Name  string  `gorm:"unique;not null"`
-	Teams []*Team `gorm:"many2many:member"` // Memberが所属するTeamのスライス
+	Teams []*Team `gorm:"many2many:member_teams"` // Memberが所属するTeamのスライス
 }
 
 func (r *Repository) CreateMember(name string) error {
@@ -56,15 +56,13 @@ func (r *Repository) RandomMember() *Member {
 	return &member
 }
 
-func (r *Repository) TeamMembers(id int) []*Member {
+func (r *Repository) TeamMembers(id int) ([]*Member, error) {
 	var team Team
 	if err := r.db.Preload("Members").First(&team, id).Error; err != nil {
-		panic("failed to connect database\n")
+		return nil, err
 	}
-	// team.Membersをmemberにコピー
-	member := make([]*Member, len(team.Members))
-	copy(member, team.Members)
-	return member
+
+	return team.Members, nil
 }
 
 func (r *Repository) RandomTeamMember(id int) *Member {

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"gorm.io/gorm"
 )
 
@@ -13,27 +12,15 @@ type Team struct {
 }
 
 func (r *Repository) CreateTeam(name string, members *[]Member) error {
-
 	team := Team{Name: name}
-
-	if name == "" {
-		return errors.New("team name cannot be empty")
-	}
-
-	r.db.Create(&team)
-
-	membersSlice := *members
-	for _, member := range membersSlice {
-		// 新しいMemberポインタを作成して、それをteam.Membersに追加する
-		newMember := member // 新しいMemberオブジェクトを作成
-		team.Members = append(team.Members, &newMember)
-	}
-
-	// チームを保存
-	if err := r.db.Save(&team).Error; err != nil {
+	if err := r.db.Create(&team).Error; err != nil {
 		return err
 	}
 
+	// メンバーを関連付けて保存
+	if err := r.db.Model(&team).Association("Members").Append(members); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -43,10 +30,6 @@ func (r *Repository) FindTeam(id int) *Team {
 		panic("failed to connect database\n")
 	}
 	return &team
-}
-
-func (r *Repository) DeleteTeam(id int) {
-	r.db.Delete(&Team{}, id)
 }
 
 func (r *Repository) AllTeam() *[]Team {
@@ -63,4 +46,22 @@ func (r *Repository) RandomTeam() *Team {
 		panic("failed to connect database\n")
 	}
 	return &team
+}
+
+func (r *Repository) DeleteTeam(id int) error {
+	var team Team
+	if err := r.db.First(&team, id).Error; err != nil {
+		return err
+	}
+
+	// 中間テーブルの関連レコードを削除
+	if err := r.db.Model(&team).Association("Members").Clear(); err != nil {
+		return err
+	}
+
+	// Teamを削除
+	if err := r.db.Delete(&team).Error; err != nil {
+		return err
+	}
+	return nil
 }

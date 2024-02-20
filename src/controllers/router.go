@@ -25,6 +25,7 @@ func SetupRoutes(r *gin.Engine) {
 		team.GET("", indexTeam)
 		team.GET("/:id/member", showTeamMember)
 		team.GET("/:id/member/random", randomTeamMember)
+		team.DELETE("/:id", deleteTeam)
 		team.POST("", createTeam)
 	}
 }
