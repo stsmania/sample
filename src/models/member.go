@@ -12,7 +12,11 @@ type Member struct {
 	Teams []*Team `gorm:"many2many:member_teams"` // Memberが所属するTeamのスライス
 }
 
-func (r *Repository) CreateMember(name string) error {
+type MemberRepository struct {
+	db *gorm.DB
+}
+
+func (r *MemberRepository) CreateMember(name string) error {
 	if name == "" {
 		return errors.New("member name cannot be empty")
 	}
@@ -20,7 +24,7 @@ func (r *Repository) CreateMember(name string) error {
 	return r.db.Create(&Member{Name: name}).Error
 }
 
-func (r *Repository) FindMember(id int) *Member {
+func (r *MemberRepository) FindMember(id int) *Member {
 	var member Member
 	if err := r.db.First(&member, id).Error; err != nil {
 		panic("failed to connect database\n")
@@ -28,7 +32,7 @@ func (r *Repository) FindMember(id int) *Member {
 	return &member
 }
 
-func (r *Repository) FindMemberByIds(ids []int) []Member {
+func (r *MemberRepository) FindMemberByIds(ids []int) []Member {
 	var members []Member
 	if err := r.db.Where("Id IN ?", ids).Find(&members).Error; err != nil {
 		panic("failed to connect database\n")
@@ -36,11 +40,11 @@ func (r *Repository) FindMemberByIds(ids []int) []Member {
 	return members
 }
 
-func (r *Repository) DeleteMember(id int) {
-	r.db.Delete(&Member{}, id)
+func (r *MemberRepository) DeleteMember(id int) {
+	r.db.Unscoped().Delete(&Member{}, id)
 }
 
-func (r *Repository) AllMember() *[]Member {
+func (r *MemberRepository) AllMember() *[]Member {
 	var member []Member
 	if err := r.db.Find(&member).Error; err != nil {
 		panic("failed to connect database\n")
@@ -48,7 +52,7 @@ func (r *Repository) AllMember() *[]Member {
 	return &member
 }
 
-func (r *Repository) RandomMember() *Member {
+func (r *MemberRepository) RandomMember() *Member {
 	var member Member
 	if err := r.db.Order("RANDOM()").Limit(1).Find(&member).Error; err != nil {
 		panic("failed to connect database\n")
@@ -56,7 +60,7 @@ func (r *Repository) RandomMember() *Member {
 	return &member
 }
 
-func (r *Repository) TeamMembers(id int) ([]*Member, error) {
+func (r *MemberRepository) TeamMembers(id int) ([]*Member, error) {
 	var team Team
 	if err := r.db.Preload("Members").First(&team, id).Error; err != nil {
 		return nil, err
@@ -65,7 +69,7 @@ func (r *Repository) TeamMembers(id int) ([]*Member, error) {
 	return team.Members, nil
 }
 
-func (r *Repository) RandomTeamMember(id int) *Member {
+func (r *MemberRepository) RandomTeamMember(id int) *Member {
 	var member Member
 	if err := r.db.Raw("SELECT * FROM members m JOIN member_teams tm ON m.id = tm.member_id WHERE tm.team_id = ? ORDER BY RANDOM()", id).First(&member).Error; err != nil {
 		panic("failed to connect database\n")

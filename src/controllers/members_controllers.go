@@ -2,29 +2,32 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"sample/src/models"
 	"strconv"
 )
 
-func indexMember(c *gin.Context) {
-	repo, err := models.NewRepository()
+var memberRepository *models.MemberRepository
+
+func init() {
+	var err error
+
+	memberRepository, err = models.NewMember()
 	if err != nil {
-		log.Fatalf("failed to create repository: %v", err)
+		fmt.Printf("failed to create repository: %v", err)
 	}
-	members := repo.AllMember()
+}
+
+func indexMember(c *gin.Context) {
+	members := memberRepository.AllMember()
 	c.HTML(http.StatusOK, "members/index.tmpl", gin.H{"members": members})
 }
 
 func showMember(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	repo, err := models.NewRepository()
-	if err != nil {
-		log.Fatalf("failed to create repository: %v", err)
-	}
-	member := repo.FindMember(id)
+	member := memberRepository.FindMember(id)
 	c.HTML(http.StatusOK, "members/show.tmpl", gin.H{
 		"title": "show",
 		"name":  member.Name,
@@ -34,14 +37,10 @@ func showMember(c *gin.Context) {
 
 func createMember(c *gin.Context) {
 	name := c.PostForm("name")
-	repo, err := models.NewRepository()
-	if err != nil {
-		log.Fatalf("failed to create repository: %v", err)
-	}
-	repoErr := repo.CreateMember(name)
-	if repoErr != nil {
+	ret := memberRepository.CreateMember(name)
+	if ret != nil {
 		var errorMessages []string
-		errorMessages = append(errorMessages, repoErr.Error())
+		errorMessages = append(errorMessages, ret.Error())
 		c.HTML(http.StatusBadRequest, "members/new.tmpl", gin.H{"errorMessages": errorMessages})
 		return
 	}
@@ -55,22 +54,14 @@ func newMember(c *gin.Context) {
 
 func deleteMember(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	repo, err := models.NewRepository()
-	if err != nil {
-		log.Fatalf("failed to create repository: %v", err)
-	}
-	repo.DeleteMember(id)
+	memberRepository.DeleteMember(id)
 	c.JSON(200, gin.H{
 		"id": id,
 	})
 }
 
 func randomMember(c *gin.Context) {
-	repo, err := models.NewRepository()
-	if err != nil {
-		log.Fatalf("failed to create repository: %v", err)
-	}
-	member := repo.RandomMember()
+	member := memberRepository.RandomMember()
 	c.JSON(200, gin.H{
 		"id":   member.Id,
 		"name": member.Name,
