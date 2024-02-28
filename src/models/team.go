@@ -11,7 +11,11 @@ type Team struct {
 	Members []*Member `gorm:"many2many:member_teams"` // Teamに所属するTeamのスライス
 }
 
-func (r *Repository) CreateTeam(name string, members *[]Member) error {
+type TeamRepository struct {
+	db *gorm.DB
+}
+
+func (r *TeamRepository) CreateTeam(name string, members *[]Member) error {
 	team := Team{Name: name}
 	if err := r.db.Create(&team).Error; err != nil {
 		return err
@@ -24,7 +28,7 @@ func (r *Repository) CreateTeam(name string, members *[]Member) error {
 	return nil
 }
 
-func (r *Repository) FindTeam(id int) *Team {
+func (r *TeamRepository) FindTeam(id int) *Team {
 	var team Team
 	if err := r.db.First(&team, id).Error; err != nil {
 		panic("failed to connect database\n")
@@ -32,7 +36,7 @@ func (r *Repository) FindTeam(id int) *Team {
 	return &team
 }
 
-func (r *Repository) AllTeam() *[]Team {
+func (r *TeamRepository) AllTeam() *[]Team {
 	var teams []Team
 	if err := r.db.Find(&teams).Error; err != nil {
 		panic("failed to connect database\n")
@@ -40,7 +44,7 @@ func (r *Repository) AllTeam() *[]Team {
 	return &teams
 }
 
-func (r *Repository) RandomTeam() *Team {
+func (r *TeamRepository) RandomTeam() *Team {
 	var team Team
 	if err := r.db.Order("RANDOM()").Limit(1).Find(&team).Error; err != nil {
 		panic("failed to connect database\n")
@@ -48,7 +52,7 @@ func (r *Repository) RandomTeam() *Team {
 	return &team
 }
 
-func (r *Repository) DeleteTeam(id int) error {
+func (r *TeamRepository) DeleteTeam(id int) error {
 	var team Team
 	if err := r.db.First(&team, id).Error; err != nil {
 		return err
@@ -60,7 +64,7 @@ func (r *Repository) DeleteTeam(id int) error {
 	}
 
 	// Teamを削除
-	if err := r.db.Delete(&team).Error; err != nil {
+	if err := r.db.Unscoped().Delete(&team).Error; err != nil {
 		return err
 	}
 	return nil
